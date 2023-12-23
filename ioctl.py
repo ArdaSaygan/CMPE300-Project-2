@@ -1,6 +1,6 @@
 from mpi4py import MPI
 from pathlib import Path
-from sys import argv
+from sys import argv, executable
 
 
 def record_machine(machines, lineArray):
@@ -20,8 +20,14 @@ def add_source(machines, product):
         if len(children) == 0 and len(machineData) == 2:
                 machineData.append(product)
                 break
-
-
+        
+def find_parent(machines, machine):
+    for m in machines:
+        children = machine.get(machines)[0]
+        if machine in children:
+            return m
+    
+    return -1
 
 
 input_file = open(Path(argv[1]), "r")   
@@ -56,7 +62,28 @@ for machine in machines:
     while (len(data) < 3):
         data.append(None)
 
-print(machines)
-
 input_file.close()
+
+
+comm_world = MPI.COMM_WORLD
+rank = comm_world.Get_rank()
+
+comm = MPI.COMM_SELF.Spawn(executable,
+                           args=['machine.py'],
+                           maxprocs=num_machines + 1)
+
+for machine in machines:
+    machineInfo = machines.get(machine)
+    dataList = [machine, find_parent(machine), machineInfo[1], machineInfo[2]]
+    comm.send(dataList, dest=machine, tag=1)
+    
+
+
+
+
+
+
+
+
+
 output_file.close()
