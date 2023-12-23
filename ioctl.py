@@ -1,6 +1,7 @@
 from mpi4py import MPI
 from pathlib import Path
 from sys import argv, executable
+from time import sleep
 
 
 def record_machine(machines, lineArray):
@@ -23,7 +24,7 @@ def add_source(machines, product):
         
 def find_parent(machines, machine):
     for m in machines:
-        children = machine.get(machines)[0]
+        children = machines.get(machine)[0]
         if machine in children:
             return m
     
@@ -70,16 +71,17 @@ rank = comm_world.Get_rank()
 
 comm = MPI.COMM_SELF.Spawn(executable,
                            args=['machine.py'],
-                           maxprocs=num_machines + 1)
+                           maxprocs=num_machines)
 
+print('main rank: ', rank)
 for machine in machines:
     machineInfo = machines.get(machine)
-    dataList = [machine, find_parent(machine), machineInfo[1], machineInfo[2]]
-    comm.send(dataList, dest=machine, tag=1)
-    
+    dataList = [machine, find_parent(machines, machine), machineInfo[1], machineInfo[2]]
+    comm.send(dataList, dest=machine-1, tag=1)
 
 
 
+sleep(15)
 
 
 
