@@ -1,10 +1,20 @@
+
 from mpi4py import MPI
-from pathlib import Path
-from sys import argv
+import numpy
+from time import sleep
+
+comm = MPI.Comm.Get_parent()
+size = comm.Get_size()
+rank = comm.Get_rank()
+
+parent_rank = numpy.array(0, dtype='i')
+comm.Bcast([parent_rank, MPI.INT], root=0)
+
+print("my rank : ", rank, "parent rank", parent_rank)
+
+data = comm.recv(source=parent_rank, tag=12)
+print("rank ", rank, " received data ", data)
+
+sleep(2)
 
 
-parent = MPI.Comm.Get_parent()
-rank = parent.Get_rank()
-
-
-print('hello from rank: ', rank)
