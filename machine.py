@@ -7,4 +7,4 @@ parent = MPI.Comm.Get_parent()
 rank = parent.Get_rank()
 
 
-print('hello from rank: ', rank, " i am assigned" , argv[0])
+print('hello from rank: ', rank)
