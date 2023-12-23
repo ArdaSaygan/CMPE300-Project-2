@@ -25,7 +25,7 @@ def add_source(machines, product):
         
 def find_parent(machines, machine):
     for m in machines:
-        children = machines.get(machine)[0]
+        children = machines.get(m)[0]
         if machine in children:
             return m
     
