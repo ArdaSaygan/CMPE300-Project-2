@@ -7,17 +7,22 @@ comm = MPI.Comm.Get_parent()
 size = comm.Get_size()
 rank = comm.Get_rank()
 
-print('child', rank)
 
+
+if rank == 0: # kill this child, for convenience 
+    pass
+    #exit()
+print("rank 2 ", rank)
 # get main processes id
-# main_rank = numpy.array(0, dtype='i')
-# comm.Bcast([main_rank, MPI.INT], root=0)
+main_rank = numpy.array(0, dtype='i')
+comm.Bcast([main_rank, MPI.INT], root=0)
 
-print('main rank', 0)
+print("rank 3", rank)
 # get machine parameters
 machine_init = comm.recv(source=main_rank, tag=1)
-print('received', rank)
+print("rank 4", rank, machine_init)
 pid, parent_pid, first_operation, feed = machine_init
+
 
 # initialize operation list, operation index
 # pid 1 is a special case

@@ -2,6 +2,7 @@ from mpi4py import MPI
 from pathlib import Path
 from sys import argv, executable
 from time import sleep
+import numpy as np
 
 
 def record_machine(machines, lineArray):
@@ -66,6 +67,7 @@ for machine in machines:
 input_file.close()
 
 
+
 comm_world = MPI.COMM_WORLD
 rank = comm_world.Get_rank()
 
@@ -73,7 +75,9 @@ comm = MPI.COMM_SELF.Spawn(executable,
                            args=['machine.py'],
                            maxprocs=num_machines)
 
-print('main rank: ', rank)
+parent_rank = np.array(rank, 'i')
+comm.Bcast([parent_rank, MPI.INT], root=MPI.ROOT)
+
 for machine in machines:
     machineInfo = machines.get(machine)
     dataList = [machine, find_parent(machines, machine), machineInfo[1], machineInfo[2]]
@@ -81,7 +85,9 @@ for machine in machines:
 
 
 
-sleep(15)
+
+
+sleep(5)
 
 
 

@@ -5,7 +5,6 @@ from time import sleep
 N = 5
 comm_world = MPI.COMM_WORLD
 rank = comm_world.Get_rank()
-
 comm = MPI.COMM_SELF.Spawn(sys.executable,
                            args=['machine.py'],
                            maxprocs=N)
@@ -17,7 +16,7 @@ comm.Bcast([parent_rank, MPI.INT], root=MPI.ROOT)
 data = [12,23,24,25,26]
 
 for p in range(0,N):
-    comm.send(obj= data[p] , dest=p, tag=12)
+    comm.send(obj= data[p] , dest=p, tag=1)
 
 
 sleep(2)
