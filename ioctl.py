@@ -44,8 +44,10 @@ wear_factors = {"enhance": wf[0], "reverse": wf[1], "chop": wf[2], "trim": wf[3]
 maintenance_threshold = int(input_file.readline())
 
 
-# each id has a list containing: a list of children, initial source (null for non leaf machines)
-# and the initial operation
+# each id has a list containing: 
+#                               a list of children, 
+#                               initial source (null for non leaf machines)
+#                               and the initial operation
 machines = dict((i, [[]]) for i in range(1, 44))
 
 # parse input data
@@ -67,22 +69,40 @@ for machine in machines:
 input_file.close()
 
 
-
+# get the main rank
 comm_world = MPI.COMM_WORLD
 rank = comm_world.Get_rank()
 
 comm = MPI.COMM_SELF.Spawn(executable,
                            args=['machine.py'],
                            maxprocs=num_machines)
-
+# broadcast main rank to all children
 parent_rank = np.array(rank, 'i')
 comm.Bcast([parent_rank, MPI.INT], root=MPI.ROOT)
 
+# send initialization info to children
 for machine in machines:
     machineInfo = machines.get(machine)
-    dataList = [machine, find_parent(machines, machine), machineInfo[1], machineInfo[2]]
+    # dataList = [machine id, parent id, list of children, first operation, source]
+    dataList = [machine, find_parent(machines, machine), machineInfo[0], machineInfo[1], machineInfo[2]]
     comm.send(dataList, dest=machine-1, tag=1)
 
+
+# initialization is done
+    
+# start the production cycles
+for cycle in range(prod_cycles):
+    # Broadcast the current production cycle
+    cycle_arr = np.array(cycle, 'i')
+    comm.Bcast([cycle_arr, MPI.INT], root=MPI.ROOT)
+
+    # Wait for all machines to complete their work
+    product = comm.recv(source=0, tag=2)
+    for child in range(1, num_machines):
+        comm.recv(source=child, tag=2)
+
+    # perform the necessary operations on the product
+    
 
 
 
