@@ -12,7 +12,7 @@ rank = comm.Get_rank()
 if rank == 0: # kill this child, for convenience 
     pass
     #exit()
-print("rank 2 ", rank)
+
 # get main processes id
 main_rank = numpy.array(0, dtype='i')
 comm.Bcast([main_rank, MPI.INT], root=0)
