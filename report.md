@@ -3,6 +3,8 @@
 In this project, we implemented a digital twin that simulates the provided factory environment using parallel programming. For this, we used the mpi4py module of python, an implementation of OpenMPI library. The given factory specification consists of operations done on products of strings, and each machine is a different thread that runs in parallel with other machines. These machines are organized in a tree structure, with each children passing their products to their parents, and the output of the root machine is the final product.
 ### Why Parallel Programming?
 The twin needs to emulate the factory at each production cycle, where in each production cycle is many machines, represented by a piece of code. At each step, all machines must execute corresponding code. By now it should be obvious that doing such a task in a single process will take a great amount of time, and the time complexity of the program is almost completely dependent on the number of machines. So, it is a far better way to implement this program in parallel, where each process corresponds to either a machine, or one control process responsible for overall organization.
+Implementing dependencies between child machines would be harder without using parallelizations as well. In our approach, simple non-blocking messeages are enough to implement this behaviour. Another approach could be using priority queues and implementing a discrete event simulation. But of course this would be harder.
+
 ## Code Logic
 ### Modules
 The code consists of three modules: a control and I/O module, a module that implements the logic for the machines, and a module that implements the operations to be used by machines.
