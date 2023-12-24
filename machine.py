@@ -81,6 +81,7 @@ while (True):
         child_rank = child-1
         prod = bytearray(1024)
         req = comm_world.irecv(buf= prod, source=child_rank, tag=3)
+        #req = comm_world.recv(buf= prod, source=child_rank, tag=3)
         prod = prod.decode("utf-8").strip('\x00')
         # may be problematic, check this design later /^|^\
         received_products.append((child, prod))
