@@ -1,8 +1,8 @@
 
 from mpi4py import MPI
-import numpy
+import numpy as np
 from time import sleep
-
+from operations import produce
 comm = MPI.Comm.Get_parent()
 comm_world = MPI.COMM_WORLD
 size = comm.Get_size()
@@ -15,7 +15,7 @@ if rank == 0: # kill this child, for convenience
     #exit()
 
 # get main processes id
-main_rank = numpy.array(0, dtype='i')
+main_rank = np.array(0, dtype='i')
 comm.Bcast([main_rank, MPI.INT], root=0)
 
 # get machine parameters
@@ -42,21 +42,47 @@ while (pid != 1) and (operation_list[op_index] != first_operation):
 # work loop
 while (True):
     # wait for the cycle signal
-    cycle = numpy.array(0, dtype='i')
+    cycle = np.array(0, dtype='i')
     comm.Bcast([cycle, MPI.INT], root=0)
 
     # wait for children machines to complete their work
-    print(f"{rank} -- {children_list}")
+    print(f"{rank} -- {pid} -- {children_list} - p - {parent_pid - 1} - source {source == None}")
+
+    while True: 
+        all_children_done = True
+        for child in children_list:
+            child_rank = child-1
+            if not comm_world.Iprobe(source=child_rank, tag=3):
+                # print(rank, " gonna probn't ", child)
+                all_children_done = False
+        if all_children_done:
+            break
+
+    received_products = list() # this will be a list of tuples, 
+                               # where first element is the pid of the child
+                               # and second element is the product recieved 
+
     for child in children_list:
-        comm_world.recv(source=child, tag=3)
+        child_rank = child-1
+        prod = bytearray(1024)
+        req = comm_world.irecv(buf= prod, source=child_rank, tag=3)
+        prod = prod.decode("utf-8").strip('\x00')
+        # may be problematic, check this design later /^|^\
+        received_products.append((child, prod))
 
     print(f" rank {rank} cycle {cycle}")
 
-    # process and create product 
-    product = "bahario"
+    # produce product
+    print(f" {rank} takes {received_products} to do {operation_list[op_index]}")
+    product = produce(received_products, operation_list[op_index])
+    op_index = (op_index+1)%op_len
+    print(f" {rank} produced {product}")
+    # calculate maintenance cost
+
+
     # send product to parent machine
-    req = comm_world.Isend(product, dest=parent_pid, tag=3)
-    # req.Wait()
+    req = comm_world.Isend([product.encode('utf-8'), MPI.CHAR], dest=parent_pid-1, tag=3)
+    req.Wait()
     # signal main that the work is done
     comm.send(product, dest=main_rank, tag=2)
 

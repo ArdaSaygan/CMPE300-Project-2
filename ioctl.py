@@ -102,7 +102,7 @@ for cycle in range(prod_cycles):
         comm.recv(source=child, tag=2)
 
     # perform the necessary operations on the product
-    
+    print(f">>>{cycle}>>", product)
 
 
 
