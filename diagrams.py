@@ -2,7 +2,8 @@ import pydot
 from pydot import Edge, Node
 from pathlib import Path
 
-graph = pydot.Dot('Example Factory', graph_type='digraph')
+graph = pydot.Dot('Example Factory', graph_type='digraph', nodesep=1.5)
+
 
 graph.add_node(Node('1'))
 

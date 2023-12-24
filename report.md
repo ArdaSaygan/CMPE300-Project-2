@@ -25,6 +25,25 @@ After production is done, each machine calculates an accumulated wear. When this
 
 After every machine sends their signal to the I/O control module, the module will output the final product and broadcast the next production cycle for all production cycles.
 ## Example
-Diagrams go here
+![Production Cycle 1](graphs/graph.png)
+
+Here, this graph shows the first production cycle for the given input:
+
+```
+2 1 enhance
+3 2 trim
+4 2 chop
+5 3 reverse
+6 3 split
+7 4 reverse
+8 4 enhance
+9 6 trim
+VBWQQW
+EQPLVL
+CAYDWC
+ZVICZA
+```
+The leaf machines 5, 7, 8 and 9 receive inputs and immediately process them. The rest of the machines will have to wait until products of each children are complete. 
 ## Bonus: Implementation Challenges
 ## Conclusion
+In this project, we have utilized parallel programming to implement a digital twin of the provided factory specification. This project has been a great introduction for us in parallel programming and inter-process communication. 
