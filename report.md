@@ -1,4 +1,5 @@
 # CMPE300 Project 2 
+Arda Saygan, 2021400063<br>Yiğit Kağan Poyrazoğlu, 2020400222
 ## Introduction
 In this project, we implemented a digital twin that simulates the provided factory environment using parallel programming. For this, we used the mpi4py module of python, an implementation of OpenMPI library. The given factory specification consists of operations done on products of strings, and each machine is a different thread that runs in parallel with other machines. These machines are organized in a tree structure, with each children passing their products to their parents, and the output of the root machine is the final product.
 ### Why Parallel Programming?
