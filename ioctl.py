@@ -98,7 +98,7 @@ system_info = np.array([prod_cycles, wear_factors, maintenance_threshold, Path(a
 system_info_pickled = pickle.dumps(system_info)
 comm.Bcast(system_info_pickled, root=MPI.ROOT)
 
-print(machines)
+#print(machines)
 # send initialization info to children
 for machine in machines:
     machineInfo = machines.get(machine)
