@@ -1,6 +1,8 @@
 # CMPE300 Project 2 
 ## Introduction
 In this project, we implemented a digital twin that simulates the provided factory environment using parallel programming. For this, we used the mpi4py module of python, an implementation of OpenMPI library. The given factory specification consists of operations done on products of strings, and each machine is a different thread that runs in parallel with other machines. These machines are organized in a tree structure, with each children passing their products to their parents, and the output of the root machine is the final product.
+### Why Parallel Programming?
+The twin needs to emulate the factory at each production cycle, where in each production cycle is many machines, represented by a piece of code. At each step, all machines must execute corresponding code. By now it should be obvious that doing such a task in a single process will take a great amount of time, and the time complexity of the program is almost completely dependent on the number of machines. So, it is a far better way to implement this program in parallel, where each process corresponds to either a machine, or one control process responsible for overall organization.
 ## Code Logic
 ### Modules
 The code consists of three modules: a control and I/O module, a module that implements the logic for the machines, and a module that implements the operations to be used by machines.
@@ -48,7 +50,7 @@ The leaf machines 5, 7, 8 and 9 receive inputs and immediately process them. The
 ## Bonus: Implementation Challenges
 While a digital twin is quite useful in simulating the factory environment, there are challenges associated to implementing such a model for a real process:
 - Model flexibility: A digital twin is tailor-fit to the process it represents, so a need to update the twin will arise whenever the corresponding process is updated. This may require dedicated personnel to keep the twin up-to-date.
-- Model representation: The digital twin will work only as good as the model approximates the process. For instance, given model in this project does not take into account any down time for maintenance. So, while the model is good at simulating individual production cycles, it is lacking in capturing the real production line of the factory. 
+- Model representation: The digital twin will work only as good as the model approximates the process. For instance, given model in this project assumes that any wear out is fixed instantly. This is not a realistic assumption and in the real case, the machine would have to stay idle until it is repaired.
 - Process uncertainty: In general, a digital twin may fail to capture any uncertainty or any unexpected event regarding the process. For instance, this twin cannot represent random break-downs for machines. In general, a digital twin may fail to take into account random variables in the environment.
 
 Overall, if this project was a real implementation of a digital twin, we would need to be careful in carefully designing the twin and its relation to the physical twin; we would need to make sure that it represents the factory as good as it fits our aim, we would need to take into account any flexibility in the underlying process and we would need to accustom for any random variables that could disrupt the industrial process.
