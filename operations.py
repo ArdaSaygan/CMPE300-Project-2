@@ -1,3 +1,11 @@
+"""
+operations.py - string operations helper module
+--------------------
+Arda Saygan, 2021400063
+Yigit Kagan Poyrazoglu, 2020400222
+Group 14
+"""
+
 from math import ceil
 
 # return the product produced

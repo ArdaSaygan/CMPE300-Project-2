@@ -1,3 +1,10 @@
+"""
+machine.py - slave logic module
+--------------------
+Arda Saygan, 2021400063
+Yigit Kagan Poyrazoglu, 2020400222
+Group 14
+"""
 
 from mpi4py import MPI
 import numpy as np
@@ -89,6 +96,7 @@ while (True):
     else:
         operation = ""
         product = produce(received_products, operation)
+    
 
     # print(f" {rank} produced {product}")
     # calculate maintenance cost

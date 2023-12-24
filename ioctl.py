@@ -1,3 +1,11 @@
+"""
+ioctl.py - I/O and program logic module
+-------------------- 
+Arda Saygan, 2021400063
+Yigit Kagan Poyrazoglu, 2020400222
+Group 14
+"""
+
 from mpi4py import MPI
 from pathlib import Path
 from sys import argv, executable
@@ -46,17 +54,21 @@ wear_factors = {"enhance": wf[0], "reverse": wf[1], "chop": wf[2], "trim": wf[3]
 maintenance_threshold = int(input_file.readline())
 
 
-# each id has a list containing: 
-#                               a list of children, 
-#                               initial source (null for non leaf machines)
-#                               and the initial operation
-machines = dict((i, [[]]) for i in range(1, 44))
+
+"""
+Initial information for each machine is stored in a dictionary while reading the input, 
+until the threads are spawned. The dictionary is organized as:
+MachineId:[[children], initial product, initial operation]
+"""
+machines = dict((i, [[]]) for i in range(1, num_machines+1))
 
 # parse input data
 for line in input_file:
     linev = line.split()
+    # for lines with 3 tokens, record/update the machine data in the dictionary
     if len(linev) == 3:
             record_machine(machines, linev)
+    # for lines with 1 token, update initial product for the machine in the dict
     elif len(linev) == 1:
             add_source(machines, linev[0])
     else:
@@ -86,6 +98,7 @@ system_info = np.array([prod_cycles, wear_factors, maintenance_threshold, Path(a
 system_info_pickled = pickle.dumps(system_info)
 comm.Bcast(system_info_pickled, root=MPI.ROOT)
 
+print(machines)
 # send initialization info to children
 for machine in machines:
     machineInfo = machines.get(machine)
