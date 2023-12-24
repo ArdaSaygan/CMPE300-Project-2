@@ -3,6 +3,7 @@ from pathlib import Path
 from sys import argv, executable
 from time import sleep
 import numpy as np
+import pickle
 
 
 def record_machine(machines, lineArray):
@@ -34,6 +35,7 @@ def find_parent(machines, machine):
 
 input_file = open(Path(argv[1]), "r")   
 output_file = open(Path(argv[2]), "w")
+output_file.close()
 
 num_machines = int(input_file.readline())
 prod_cycles = int(input_file.readline())
@@ -79,6 +81,10 @@ comm = MPI.COMM_SELF.Spawn(executable,
 # broadcast main rank to all children
 parent_rank = np.array(rank, 'i')
 comm.Bcast([parent_rank, MPI.INT], root=MPI.ROOT)
+# broadcast other important info about the system configuration
+system_info = np.array([prod_cycles, wear_factors, maintenance_threshold, Path(argv[2])], dtype=object)
+system_info_pickled = pickle.dumps(system_info)
+comm.Bcast(system_info_pickled, root=MPI.ROOT)
 
 # send initialization info to children
 for machine in machines:
@@ -102,16 +108,15 @@ for cycle in range(prod_cycles):
         comm.recv(source=child, tag=2)
 
     # perform the necessary operations on the product
-    print(f">>>{cycle}>>", product)
+    
+    # print(f">>>{cycle}>>", product)
+    output_file = open(Path(argv[2]), "a")
+    output_file.write(product+"\n")
+    output_file.close()
+
+
+sleep(0.3)
 
 
 
 
-sleep(5)
-
-
-
-
-
-
-output_file.close()
