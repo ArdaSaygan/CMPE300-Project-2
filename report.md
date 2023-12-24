@@ -16,6 +16,7 @@ This module is responsible for the main machine logic. The machines all start by
 The machines then receive the production cycle. The respective operation is determined by the production cycle (defined in the order provided above): The operation alternates in order between each other by different production cycles. Then, the machines produce the product from received products, passes it to the next machine, logs maintenance costs and sends a 'work done' signal. 
 #### operations.py
 This module implements an interface for string operations, for more convenient use in machine.py.
+
 ### Execution Logic
 The program starts by reading the input file provided as an argument to the program. I/O control module initializes all the machines, broadcasts system-wide information to the machines (such as wear factors and maintenance threshold), sends machine-specific data (initial operations, initial products etc.) to each machine, and then sends the production cycle.
 
@@ -45,5 +46,11 @@ ZVICZA
 ```
 The leaf machines 5, 7, 8 and 9 receive inputs and immediately process them. The rest of the machines will have to wait until products of each children are complete. 
 ## Bonus: Implementation Challenges
+While a digital twin is quite useful in simulating the factory environment, there are challenges associated to implementing such a model for a real process:
+- Model flexibility: A digital twin is tailor-fit to the process it represents, so a need to update the twin will arise whenever the corresponding process is updated. This may require dedicated personnel to keep the twin up-to-date.
+- Model representation: The digital twin will work only as good as the model approximates the process. For instance, given model in this project does not take into account any down time for maintenance. So, while the model is good at simulating individual production cycles, it is lacking in capturing the real production line of the factory. 
+- Process uncertainty: In general, a digital twin may fail to capture any uncertainty or any unexpected event regarding the process. For instance, this twin cannot represent random break-downs for machines. In general, a digital twin may fail to take into account random variables in the environment.
+
+Overall, if this project was a real implementation of a digital twin, we would need to be careful in carefully designing the twin and its relation to the physical twin; we would need to make sure that it represents the factory as good as it fits our aim, we would need to take into account any flexibility in the underlying process and we would need to accustom for any random variables that could disrupt the industrial process.
 ## Conclusion
 In this project, we have utilized parallel programming to implement a digital twin of the provided factory specification. This project has been a great introduction for us in parallel programming and inter-process communication. 
